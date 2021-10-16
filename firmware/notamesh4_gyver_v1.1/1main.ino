@@ -25,12 +25,6 @@ bool key_bounce = 0;                                          //для анти�
 uint32_t key_time;                                            //время последнего нажатия
 #endif
 
-#if IR_ON == 1
-int RECV_PIN = PIN_IR;
-IRrecv irrecv(RECV_PIN);
-decode_results results;
-#endif
-
 #if ( IR_ON == 1 || KEY_ON == 1 || USE_BTN == 1 )
 uint8_t  IR_New_Mode = 0;                                      //Выбор эффекта
 uint32_t IR_Time_Mode = 0;                                     //время последнего нажатия
@@ -55,8 +49,6 @@ uint16_t NUM_LEDS;                                          // Number of LED's w
 uint16_t KolLed;
 #endif
 
-int max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
-
 struct CRGB leds[MAX_LEDS];                                   // Initialize our LED array. We'll be using less in operation.
 
 CRGBPalette16 gCurrentPalette;                               // Use palettes instead of direct CHSV or CRGB assignments
@@ -77,13 +69,19 @@ TBlendType currentBlending = LINEARBLEND;                     // NOBLEND or LINE
 #define STRANDLEN 1                                           // EEPROM location for the actual Length of the strand, which is < MAX_LEDS
 #define STRANDEL  3                                           // EEPROM location for the mesh delay value.
 #define ISINIT    4                                           // EEPROM location used to verify that this Arduino has been initialized
+#define STRANDSPEED  5                                        // EEPROM location for the speed value.
+#define STRANDBRIGHT 6                                        // EEPROM location for the brightness value.
 
 #define INITVAL   0x55                                        // If this is the value in ISINIT, then the Arduino has been initialized. Startmode should be 0 and strandlength should be 
 #define INITMODE  0                                           // Startmode is 0, which is black.
 #define INITLEN   KOL_LED                                     // Start length LED's.
 #define INITDEL   0                                           // Starting mesh delay value of the strand in milliseconds.
+#define INITSPEED   0                                           // Starting mesh delay value of the strand in milliseconds.
+#define INITBRIGHT   255                                        // Overall brightness definition. It can be changed on the fly.
 
-uint16_t meshdelay;                                             // Timer for the notamesh. Works with INITDEL.
+uint16_t meshdelay;                                            // Timer for the notamesh. Works with INITDEL.
+uint16_t thisdelay;                                            // Задержка delay, Works with INITSPEED
+int max_bright;                                                 //Bright. Works with INITBRIGHT
 
 uint8_t ledMode = 0;                                            // номер текущего режима
 #if CHANGE_ON == 1
@@ -114,7 +112,6 @@ uint8_t palchg = 3;                                           // Управле�
 uint8_t startindex = 0;                                       // С какого цвета начинать. Переменная для эффектов one_sin_pal.
 uint8_t thisbeat;                                             // Переменная для эффектов juggle_pal.
 uint8_t thiscutoff = 192;                                     // Если яркость ниже этой, то яркость = 0. Переменная для эффектов one_sin_pal и two_sin.
-uint16_t thisdelay = 0;                                       // Задержка delay
 uint8_t thisdiff = 1;                                         // Шаг изменения палитры. Переменная для эффектов confetti_pal, juggle_pal и rainbow_march.
 int8_t  thisdir = 1;                                          // Направление движения эффекта. принимает значение -1 или 1.
 uint8_t thisfade = 224;                                       // Скорость затухания. Переменная для эффектов confetti_pal и juggle_pal.
@@ -125,6 +122,8 @@ int     thisphase = 0;                                        // Изменен�
 uint8_t thisrot = 1;                                          // Измение скорости вращения волны. В настоящее время 0.
 int8_t  thisspeed = 4;                                        // Изменение стандартной скорости
 uint8_t wavebright = 255;                                     // Вы можете изменить яркость волн / полос, катящихся по экрану.
+
+bool powerOff = false;
 
 #if MY_MODE
 const PROGMEM uint8_t my_mode[] = { MY_MODE };            //массив выбранных режимов
@@ -168,9 +167,11 @@ void demo_check();
 #include "candles.h"
 #include "colorwave.h"
 #include "getirl.h"
-#include "GyverButton.h"
 
+#if USE_BTN == 1
+#include "GyverButton.h"
 GButton btn(BTN_PIN);
+#endif
 
 /*------------------------------------------------------------------------------------------
   --------------------------------------- Start of code --------------------------------------
@@ -188,22 +189,6 @@ void setup() {
 #endif
   delay(1000);                                                                    // Slow startup so we can re-upload in the case of errors.
 
-#if IR_ON == 1
-  irrecv.enableIRIn();                                                          // Start the receiver
-#endif
-
-  LEDS.setBrightness(max_bright);                                                 // Set the generic maximum brightness value.
-
-#if LED_CK
-
-  LEDS.addLeds<CHIPSET, LED_DT, LED_CK, COLOR_ORDER>(leds, MAX_LEDS);
-
-#else
-
-  LEDS.addLeds<CHIPSET, LED_DT, COLOR_ORDER >(leds, MAX_LEDS);                   //Для светодиодов WS2812B
-
-#endif
-
   set_max_power_in_volts_and_milliamps(POWER_V, POWER_I);                         //Настройка блока питания
 
   random16_set_seed(4832);                                                        // Awesome randomizer of awesomeness
@@ -211,18 +196,21 @@ void setup() {
 
 
 #if IR_ON == 1
+  IrReceiver.begin(PIN_IR, DISABLE_LED_FEEDBACK);
 
-ledMode = EEPROM.read(STARTMODE);
-// Location 0 is the starting mode.
-NUM_LEDS = EEPROM.read(STRANDLEN); 
+  ledMode = EEPROM.read(STARTMODE);
+  // Location 0 is the starting mode.
+  NUM_LEDS = EEPROM.read(STRANDLEN);
 #if MAX_LEDS < 255
-if (EEPROM.read(STRANDLEN+1))
-NUM_LEDS = MAX_LEDS; // Need to ensure NUM_LEDS < MAX_LEDS elsewhere.
+  if (EEPROM.read(STRANDLEN + 1))
+    NUM_LEDS = MAX_LEDS; // Need to ensure NUM_LEDS < MAX_LEDS elsewhere.
 #else
   NUM_LEDS = (uint16_t)EEPROM.read(STRANDLEN + 1) << 8 +                               // Need to ensure NUM_LEDS < MAX_LEDS elsewhere.
              EEPROM.read(STRANDLEN);
 #endif
   meshdelay = EEPROM.read(STRANDEL);                                              // This is our notamesh delay for cool delays across strands.
+  thisdelay = EEPROM.read(STRANDSPEED);                                           // This is our speed.
+  max_bright = EEPROM.read(STRANDBRIGHT);                                       // This is our brightness
 
   if (  (EEPROM.read(ISINIT) != INITVAL) ||                                        // Check to see if Arduino has been initialized, and if not, do so.
         (NUM_LEDS > MAX_LEDS )  ||
@@ -237,20 +225,40 @@ NUM_LEDS = MAX_LEDS; // Need to ensure NUM_LEDS < MAX_LEDS elsewhere.
 #endif
     EEPROM.write(ISINIT, INITVAL);                                                // Initialize the starting value (so we know it's initialized) to INITVAL.
     EEPROM.write(STRANDEL, INITDEL);                                              // Initialize the notamesh delay to 0.
+    EEPROM.write(STRANDSPEED, INITSPEED);                                         // Initialize the spees to 0.
+    EEPROM.write(STRANDBRIGHT, INITBRIGHT);                                       // Initialize the brightness to 255.
     ledMode = INITMODE;
     NUM_LEDS = INITLEN;
     meshdelay = INITDEL;
+    thisdelay = INITSPEED;
+    max_bright = INITBRIGHT;
   }
 #else
   ledMode = INITMODE;
   NUM_LEDS = KOL_LED;
   meshdelay = INITDEL;
+  thisdelay = INITSPEED;
+  max_bright = INITBRIGHT;
 #endif
 
 #if LOG_ON == 1
   Serial.print(F("Initial delay: ")); Serial.print(meshdelay * 100); Serial.println(F("ms delay."));
   Serial.print(F("Initial strand length: ")); Serial.print(NUM_LEDS); Serial.println(F(" LEDs"));
 #endif
+
+  LEDS.setBrightness(max_bright);                                                 // Set the generic maximum brightness value.
+
+#if LED_CK
+
+  LEDS.addLeds<CHIPSET, LED_DT, LED_CK, COLOR_ORDER>(leds, MAX_LEDS);
+
+#else
+
+  LEDS.addLeds<CHIPSET, LED_DT, COLOR_ORDER >(leds, MAX_LEDS);                   //Для светодиодов WS2812B
+
+#endif
+
+
 
 #if BLACKSTART == 1
   solid = CRGB::Black;                 //Запуск с пустого поля
@@ -363,11 +371,10 @@ void loop() {
     EVERY_N_MILLIS_I(thistimer, thisdelay) {                                    // Sets the original delay time.
       thistimer.setPeriod(thisdelay);                                           // This is how you update the delay value on the fly.
       KolLed = NUM_LEDS;                                                        // Выводим Эффект на все светодиоды
-      strobe_mode(ledMode, 0);                                                  // отобразить эффект;
 #if CHANGE_ON == 1
       if (StepMode < NUM_LEDS) {                                                // требуется наложить новый эффект
         KolLed = StepMode;                                                      // Выводим Эффект на все светодиоды
-        if (StepMode > 10)  strobe_mode(newMode, 0);                            // отобразить эффект;
+        if (StepMode > 10) ledMode = newMode;                                  // отобразить э
 #if CHANGE_SPARK == 4
         sparkler(rand_spark);
 #else
@@ -375,6 +382,7 @@ void loop() {
 #endif
       }
 #endif
+      strobe_mode(ledMode, 0);                                                  // отобразить эффект;
     }
 
 #if CHANGE_ON == 1
@@ -487,23 +495,22 @@ void loop() {
 #endif
 
 #if IR_ON == 1
-  while (!irrecv.isIdle());                                                   // if not idle, wait till complete
+  while (!IrReceiver.isIdle());                                                   // if not idle, wait till complete
 
-  if (irrecv.decode(&results)) {
+  if (IrReceiver.decode()) {
     /* respond to button */
 
     if (!Protocol) {
       Protocol = 1;                                        // update the values to the newest valid input
 
 #if IR_REPEAT == 1
-      if ( results.value != 0xffffffff)                    //Если не повтор то вставить новую команду
-        Command = results.value;
-      else Protocol = 2;
+      if ( IrReceiver.decodedIRData.decodedRawData != 0xffffffff)                    //Если не повтор то вставить новую команду
+        Command = IrReceiver.decodedIRData.decodedRawData;
 #else
-      Command = results.value;
+      Command = IrReceiver.decodedIRData.decodedRawData;
 #endif
     }
-    irrecv.resume(); // Set up IR to receive next value.
+    IrReceiver.resume(); // Set up IR to receive next value.
   }
 #endif
 

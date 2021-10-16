@@ -2,8 +2,60 @@
 //----------------- IR Receiver and Button Command Processing ---------------------------------------------
 #if ( IR_ON == 1 || KEY_ON == 1 || USE_BTN == 1)
 
-void SetMode (uint8_t Mode)
-{ demorun = 0;
+
+void blink(CRGB color) {
+  fill_solid(leds, NUM_LEDS, color);
+  FastLED.show();
+  delay(500);
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
+  FastLED.show();
+  delay(500);
+}
+
+void blinkMode() {
+  //Гирлянда проморгает номер эффекта. Вначале выключится на 2 секунд, потом красные моргания на первую цифру и потом синие на вторую
+
+#if LOG_ON == 1
+  Serial.print(F("CurrentMode is+ ")); Serial.println(ledMode);
+#endif
+
+  uint8_t first_digit = ledMode / 10;
+  uint8_t second_digit = ledMode % 10;
+
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
+  FastLED.show();
+  delay(2000);
+  if (0 == first_digit) {
+    blink(CRGB::White);
+  } else
+    for (uint8_t i = 1; i <= first_digit; ++i) {
+      blink(CRGB::Red);
+#if LOG_ON == 1
+      Serial.print(F("first_digit blink: ")); Serial.println(i);
+#endif
+    }
+
+  delay(2000);
+
+  if (0 == second_digit) {
+    blink(CRGB::White);
+  } else
+    for (uint8_t i = 1; i <= second_digit; ++i) {
+      blink(CRGB::Blue);
+#if LOG_ON == 1
+      Serial.print(F("second_digit blink: ")); Serial.println(i);
+#endif
+    }
+
+}
+
+void SetMode (uint8_t Mode) {
+  demorun = 0;
+
+#if LOG_ON == 1
+  Serial.print(F("SetMode: ")); Serial.println(Mode);
+#endif
+
 #if CHANGE_ON == 1
   newMode = Mode;
   StepMode = 1;
@@ -14,10 +66,13 @@ void SetMode (uint8_t Mode)
   ledMode = Mode;
   meshwait();
   strobe_mode(Mode, 1);                                // Does NOT reset to 0.
+
+
 #endif
 #if CANDLE_KOL >0
   PolCandle = random8(CANDLE_KOL);
 #endif
+
 }
 
 void getirl() {                                                   // This is the IR function that gets the value and selects/performs command.
@@ -29,11 +84,29 @@ void getirl() {                                                   // This is the
 #endif
 
     switch (Command) {
+#if IR_Key_Power
+      case IR_Key_Power :   ////////////////////////////////////////////////////////////////////////// Выключить/включить гирлянду
+      powerOff = !powerOff;
+
+      if (powerOff) {
+         LEDS.setBrightness(0);
+      } else {
+         LEDS.setBrightness(max_bright);
+      }
+#if LOG_ON == 1
+        Serial.print(F("powerOff= ")); Serial.println(powerOff);
+#endif
+        break;
+#endif
+
 
 #if IR_Key_Brightness_plus
       case IR_Key_Brightness_plus :   //////////////////////////////////////////////////////////////////////////  Увеличить максимальную яркость
         max_bright = min(max_bright * 2, 255);
         LEDS.setBrightness(max_bright);
+#if IR_ON == 1
+        EEPROM.write(STRANDBRIGHT, max_bright);
+#endif
 #if LOG_ON == 1
         Serial.print(F("Brightness+ ")); Serial.println(max_bright);
 #endif
@@ -44,6 +117,9 @@ void getirl() {                                                   // This is the
       case IR_Key_Brightness_minus :    /////////////////////////////////////////////////////////////////////////  Уменьшить максимальную яркость
         max_bright = max(max_bright / 2, 1);
         LEDS.setBrightness(max_bright);
+#if IR_ON == 1
+        EEPROM.write(STRANDBRIGHT, max_bright);
+#endif
 #if LOG_ON == 1
         Serial.print(F("Brightness- ")); Serial.println(max_bright);
 #endif
@@ -145,6 +221,9 @@ void getirl() {                                                   // This is the
 #if IR_Key_Speed_minus
       case IR_Key_Speed_minus :                ///////////////////////////////////////////////////////////////////////////  Замедлить движение
         if (thisdelay < 1000) thisdelay++;
+#if IR_ON == 1
+        EEPROM.write(STRANDSPEED, thisdelay);
+#endif
 #if LOG_ON == 1
         Serial.print(F("Speed- ")); Serial.println(thisdelay);
 #endif
@@ -154,6 +233,9 @@ void getirl() {                                                   // This is the
 #if IR_Key_Speed_plus
       case IR_Key_Speed_plus :                ///////////////////////////////////////////////////////////////////////////  Ускорить движение
         if (thisdelay > 0) thisdelay--;
+#if IR_ON == 1
+        EEPROM.write(STRANDSPEED, thisdelay);
+#endif
 #if LOG_ON == 1
         Serial.print(F("Speed+ ")); Serial.println(thisdelay);
 #endif
@@ -697,6 +779,18 @@ void getirl() {                                                   // This is the
         break;
 #endif
 
+#if IR_Key_Show_ModeId
+      case IR_Key_Show_ModeId :              ///////////////////////////////////////////////////////////////////////////  Гирлянда проморгает номер эффекта. Вначале выключится на 5 секунд, потом красные моргания на первую цифру и потом синие на вторую
+        if (Protocol == 1) {          //отключить повтор
+#if LOG_ON == 1
+          Serial.println(F("Blink Mode"));
+#endif
+#if IR_ON == 1
+          blinkMode();
+#endif
+        }
+        break;
+#endif
 #if IR_Key_Delay_minus
       case IR_Key_Delay_minus :            ///////////////////////////////////////////////////////////////////////////  Уменьшить задержку на 100ms
         demorun = 0; ledMode = 201;
