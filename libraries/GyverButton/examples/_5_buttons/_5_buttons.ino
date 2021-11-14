@@ -1,12 +1,12 @@
-// Пример использования библиотеки GyverButton
-// опрос 5 кнопок в ручном режиме
+/*
+   Пример использования библиотеки GyverButton, 5 кнопок
+*/
 
-// кнопки подключены к земле (PIN --- КНОПКА --- GND)
-#define BTN1 3
-#define BTN2 4
-#define BTN3 5
-#define BTN4 6
-#define BTN5 7
+#define BTN1 3			// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN2 4        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN3 5        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN4 6        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN5 7        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
 GButton butt1(BTN1);
@@ -20,14 +20,12 @@ void setup() {
 }
 
 void loop() {
-  // тик в ручном режиме
   butt1.tick();
   butt2.tick();
   butt3.tick();
   butt4.tick();
   butt5.tick();
 
-  // проверяем одиночный клик
   if (butt1.isClick()) Serial.println("Button 1");
   if (butt2.isClick()) Serial.println("Button 2");
   if (butt3.isClick()) Serial.println("Button 3");
