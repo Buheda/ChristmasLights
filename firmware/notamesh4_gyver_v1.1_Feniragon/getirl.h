@@ -25,11 +25,11 @@ void blinkMode() {
   //Гирлянда проморгает номер эффекта. Вначале выключится на 2 секунд, потом красные моргания на первую цифру и потом синие на вторую
 
 #if LOG_ON == 1
-  Serial.print(F("CurrentMode is+ ")); Serial.println(LED_MODE);
+  Serial.print(F("CurrentMode is+ ")); Serial.println(psLED_MODE);
 #endif
 
-  uint8_t first_digit = LED_MODE / 10;
-  uint8_t second_digit = LED_MODE % 10;
+  uint8_t first_digit = psLED_MODE / 10;
+  uint8_t second_digit = psLED_MODE % 10;
 
   fill_solid(leds, NUM_LEDS, CRGB::Black);
   FastLED.show();
@@ -55,7 +55,6 @@ void blinkMode() {
       Serial.print(F("second_digit blink: ")); Serial.println(i);
 #endif
     }
-
 }
 
 void SetMode (uint8_t Mode) {
@@ -72,22 +71,59 @@ void SetMode (uint8_t Mode) {
   rand_spark = random8(3) + 1;
 #endif
 #else
-  LED_MODE = Mode;
+  psLED_MODE = Mode;
   meshwait();
   strobe_mode(Mode, 1);                                // Does NOT reset to 0.
-
-
 #endif
+
 #if CANDLE_KOL >0
   PolCandle = random8(CANDLE_KOL);
 #endif
 
 #if LOG_ON == 1
-  Serial.print(F("SetMode in ELSE: ")); Serial.println(LED_MODE);
+  Serial.print(F("SetMode in ELSE: ")); Serial.println(psLED_MODE);
+#endif
+}
+
+void setNextAvailableMode() {
+#if AVAILABLE_MODES
+  if (tek_available_mode >= (available_mode_count - 1))
+    tek_available_mode = 0;
+  else
+    tek_available_mode++;
+  SetMode(pgm_read_byte(available_mode + tek_available_mode));
+#else
+  if (psLED_MODE >= maxMode)
+    SetMode(0);
+  else
+    SetMode(psLED_MODE + 1);
+#endif
+}
+
+void setPrevAvailableMode() {
+#if AVAILABLE_MODES
+  if (tek_available_mode > 0)
+    tek_available_mode--;
+  else
+    tek_available_mode = available_mode_count - 1;
+  SetMode(pgm_read_byte(available_mode + tek_available_mode));
+#else
+  if (psLED_MODE > 0)
+    SetMode(psLED_MODE - 1);
+  else
+    SetMode(maxMode);
 #endif
 }
 
 void getirl() {                                                   // This is the IR function that gets the value and selects/performs command.
+
+  if (powerOff && Command != IR_Key_Power) {
+#if LOG_ON == 1
+    Serial.print(F("Command: 0x")); Serial.println(Command, HEX);
+#endif
+    return;
+  } 
+
 
   if (Protocol) {
     bool isSignalCorrect = true;
@@ -103,7 +139,7 @@ void getirl() {                                                   // This is the
         if (powerOff) {
           LEDS.setBrightness(0);
         } else {
-          LEDS.setBrightness(MAX_BRIGHT);
+          LEDS.setBrightness(psMAX_BRIGHT);
         }
 #if LOG_ON == 1
         Serial.print(F("powerOff= ")); Serial.println(powerOff);
@@ -114,29 +150,29 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Brightness_plus
       case IR_Key_Brightness_plus :   //////////////////////////////////////////////////////////////////////////  Увеличить максимальную яркость
-        MAX_BRIGHT = min(MAX_BRIGHT * 2, 255);
-        LEDS.setBrightness(MAX_BRIGHT);
+        psMAX_BRIGHT = min(psMAX_BRIGHT * 2, 255);
+        LEDS.setBrightness(psMAX_BRIGHT);
         updateEEPROM_MAX_BRIGHT();
 #if LOG_ON == 1
-        Serial.print(F("Brightness+ ")); Serial.println(MAX_BRIGHT);
+        Serial.print(F("Brightness+ ")); Serial.println(psMAX_BRIGHT);
 #endif
         break;
 #endif
 
 #if IR_Key_Brightness_minus
       case IR_Key_Brightness_minus :    /////////////////////////////////////////////////////////////////////////  Уменьшить максимальную яркость
-        MAX_BRIGHT = max(MAX_BRIGHT / 2, 1);
-        LEDS.setBrightness(MAX_BRIGHT);
+        psMAX_BRIGHT = max(psMAX_BRIGHT / 2, 1);
+        LEDS.setBrightness(psMAX_BRIGHT);
         updateEEPROM_MAX_BRIGHT();
 #if LOG_ON == 1
-        Serial.print(F("Brightness- ")); Serial.println(MAX_BRIGHT);
+        Serial.print(F("Brightness- ")); Serial.println(psMAX_BRIGHT);
 #endif
         break;
 #endif
 
 #if IR_Key_Reset
       case IR_Key_Reset :              ///////////////////////////////////////////////////////////////////////////  Сброс всех настроек
-        LED_MODE = 0; strobe_mode(LED_MODE, 1); FastLED.show(); bootme();
+        psLED_MODE = 0; strobe_mode(psLED_MODE, 1); FastLED.show(); bootme();
 #if LOG_ON == 1
         Serial.println(F("Reset"));
 #endif
@@ -181,37 +217,37 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Length_Garland_plus
       case IR_Key_Length_Garland_plus : ///////////////////////////////////////////////////////////////////////////  Увеличить количество светодиодов в гирлянде
-        demorun = 0; LED_MODE = 200;
-        if (NUM_LEDS < (MAX_LEDS - 1)) NUM_LEDS++;                        //Новое значение
-#if IR_ON == 1
-#if MAX_LEDS < 255
-        EEPROM.write(STRANDLEN, NUM_LEDS);                              //Сохранить в память
-#else
-        EEPROM.write(STRANDLEN,   (uint16_t)(NUM_LEDS) & 0x00ff);       //Сохранить в память
-        EEPROM.write(STRANDLEN + 1, (uint16_t)(NUM_LEDS) >> 8);         //Сохранить в память
-#endif
-#endif
-#if LOG_ON == 1
-        Serial.print(F("Length Garland ")); Serial.println(NUM_LEDS);
-#endif
+        /* demorun = 0; psLED_MODE = 200;
+          if (NUM_LEDS < (MAX_LEDS - 1)) NUM_LEDS++;                        //Новое значение
+          #if IR_ON == 1
+          #if MAX_LEDS < 255
+          EEPROM.write(STRANDLEN, NUM_LEDS);                              //Сохранить в память
+          #else
+          EEPROM.write(STRANDLEN,   (uint16_t)(NUM_LEDS) & 0x00ff);       //Сохранить в память
+          EEPROM.write(STRANDLEN + 1, (uint16_t)(NUM_LEDS) >> 8);         //Сохранить в память
+          #endif
+          #endif
+          #if LOG_ON == 1
+          Serial.print(F("Length Garland ")); Serial.println(NUM_LEDS);
+          #endif*/
         break;
 #endif
 
 #if IR_Key_Length_Garland_minus
       case IR_Key_Length_Garland_minus : ///////////////////////////////////////////////////////////////////////////  Уменьшить количество светодиодов в гирлянде
-        demorun = 0; LED_MODE = 200;
-        if (NUM_LEDS > 0) NUM_LEDS--;                                     //Новое значение
-#if IR_ON == 1
-#if MAX_LEDS < 255
-        EEPROM.write(STRANDLEN, NUM_LEDS);                              //Сохранить в память
-#else
-        EEPROM.write(STRANDLEN,   (uint16_t)(NUM_LEDS) & 0x00ff);       //Сохранить в память
-        EEPROM.write(STRANDLEN + 1, (uint16_t)(NUM_LEDS) >> 8);         //Сохранить в память
-#endif
-#endif
-#if LOG_ON == 1
-        Serial.print(F("Length Garland ")); Serial.println(NUM_LEDS);
-#endif
+        /*demorun = 0; psLED_MODE = 200;
+          if (NUM_LEDS > 0) NUM_LEDS--;                                     //Новое значение
+          #if IR_ON == 1
+          #if MAX_LEDS < 255
+          EEPROM.write(STRANDLEN, NUM_LEDS);                              //Сохранить в память
+          #else
+          EEPROM.write(STRANDLEN,   (uint16_t)(NUM_LEDS) & 0x00ff);       //Сохранить в память
+          EEPROM.write(STRANDLEN + 1, (uint16_t)(NUM_LEDS) >> 8);         //Сохранить в память
+          #endif
+          #endif
+          #if LOG_ON == 1
+          Serial.print(F("Length Garland ")); Serial.println(NUM_LEDS);
+          #endif*/
         break;
 #endif
 
@@ -228,20 +264,20 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Speed_minus
       case IR_Key_Speed_minus :                ///////////////////////////////////////////////////////////////////////////  Замедлить движение
-        if (THIS_DELAY < 1000) THIS_DELAY++;
+        if (psTHIS_DELAY < 1000) psTHIS_DELAY++;
         updateEEPROM_THIS_DELAY();
 #if LOG_ON == 1
-        Serial.print(F("Speed- ")); Serial.println(THIS_DELAY);
+        Serial.print(F("Speed- ")); Serial.println(psTHIS_DELAY);
 #endif
         break;
 #endif
 
 #if IR_Key_Speed_plus
       case IR_Key_Speed_plus :                ///////////////////////////////////////////////////////////////////////////  Ускорить движение
-        if (THIS_DELAY > 0) THIS_DELAY--;
+        if (psTHIS_DELAY > 0) psTHIS_DELAY--;
         updateEEPROM_THIS_DELAY();
 #if LOG_ON == 1
-        Serial.print(F("Speed+ ")); Serial.println(THIS_DELAY);
+        Serial.print(F("Speed+ ")); Serial.println(psTHIS_DELAY);
 #endif
         break;
 #endif
@@ -285,8 +321,7 @@ void getirl() {                                                   // This is the
 #if IR_Key_Previous_mode
       case IR_Key_Previous_mode :          ///////////////////////////////////////////////////////////////////////////  Предыдущий эффект
         if (Protocol == 1) {          //отключить повтор
-          if (LED_MODE > 0)  SetMode(LED_MODE - 1);
-          else            SetMode(maxMode);
+          setPrevAvailableMode();
 #if LOG_ON == 1
           Serial.println(F("Previous mode"));
 #endif
@@ -297,8 +332,7 @@ void getirl() {                                                   // This is the
 #if IR_Key_Next_mode
       case IR_Key_Next_mode :              ///////////////////////////////////////////////////////////////////////////  Следующий эффект
         if (Protocol == 1) {          //отключить повтор
-          if (LED_MODE >= (maxMode))  SetMode(0);
-          else                      SetMode(LED_MODE + 1);
+          setNextAvailableMode();
 #if LOG_ON == 1
           Serial.println(F("Next mode"));
 #endif
@@ -773,10 +807,8 @@ void getirl() {                                                   // This is the
 #if IR_Key_Save_Mode
       case IR_Key_Save_Mode :              ///////////////////////////////////////////////////////////////////////////  Сохранить эффект как запускающийся первым
         if (Protocol == 1) {          //отключить повтор
-          updateEEPROM_START_MODE();
-#if LOG_ON == 1
-          Serial.println(F("Save Mode"));
-#endif
+          updateEEPROM_LED_MODE();
+
         }
         break;
 #endif
@@ -795,22 +827,22 @@ void getirl() {                                                   // This is the
 #endif
 #if IR_Key_Delay_minus
       case IR_Key_Delay_minus :            ///////////////////////////////////////////////////////////////////////////  Уменьшить задержку на 100ms
-        demorun = 0; LED_MODE = 201;
-        if (MESH_DELAY > 0) MESH_DELAY--;                                   //Новое значение
+        demorun = 0; psLED_MODE = 201;
+        if (psMESH_DELAY > 0) psMESH_DELAY--;                                   //Новое значение
         updateEEPROM_MESH_DELAY();
 #if LOG_ON == 1
-        Serial.print(F("Delay ")); Serial.print(MESH_DELAY * 100); Serial.println(F(" ms"));
+        Serial.print(F("Delay ")); Serial.print(psMESH_DELAY * 100); Serial.println(F(" ms"));
 #endif
         break;
 #endif
 
 #if IR_Key_Delay_plus
       case IR_Key_Delay_plus :            ///////////////////////////////////////////////////////////////////////////  Увеличить задержку на 100ms
-        demorun = 0; LED_MODE = 201;
-        if (MESH_DELAY < 100) MESH_DELAY++;                                 //Новое значение
+        demorun = 0; psLED_MODE = 201;
+        if (psMESH_DELAY < 100) psMESH_DELAY++;                                 //Новое значение
         updateEEPROM_MESH_DELAY();
 #if LOG_ON == 1
-        Serial.print(F("Delay ")); Serial.print(MESH_DELAY * 100); Serial.println(F(" ms"));
+        Serial.print(F("Delay ")); Serial.print(psMESH_DELAY * 100); Serial.println(F(" ms"));
 #endif
         break;
 #endif
@@ -863,7 +895,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Black
       case IR_Key_Solid_Black :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Черный
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Black;
 #if LOG_ON == 1
         Serial.println(F("Solid_Black"));
@@ -873,7 +905,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Red
       case IR_Key_Solid_Red :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Красный
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Red;
 #if LOG_ON == 1
         Serial.println(F("Solid_Red"));
@@ -883,7 +915,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Orange
       case IR_Key_Solid_Orange :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Оранжевый
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Orange;
 #if LOG_ON == 1
         Serial.println(F("Solid_Orange"));
@@ -893,7 +925,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Yellow
       case IR_Key_Solid_Yellow :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Желтый
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Yellow;
 #if LOG_ON == 1
         Serial.println(F("Solid_Yellow"));
@@ -903,7 +935,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Green
       case IR_Key_Solid_Green :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Зеленый
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Green;
 #if LOG_ON == 1
         Serial.println(F("Solid_Green"));
@@ -913,7 +945,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_SkyBlue
       case IR_Key_Solid_SkyBlue :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Голубой
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::SkyBlue;
 #if LOG_ON == 1
         Serial.println(F("Solid_SkyBlue"));
@@ -923,7 +955,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Blue
       case IR_Key_Solid_Blue :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Синий
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Blue;
 #if LOG_ON == 1
         Serial.println(F("Solid_Blue"));
@@ -933,7 +965,7 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_Violet
       case IR_Key_Solid_Violet :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Фиолетовый
-        demorun = 0; LED_MODE = 100; palchg = 0;
+        demorun = 0; psLED_MODE = 100; palchg = 0;
         solid = CRGB::Violet;
 #if LOG_ON == 1
         Serial.println(F("Solid_Violet"));
@@ -943,7 +975,6 @@ void getirl() {                                                   // This is the
 
 #if IR_Key_Solid_White
       case IR_Key_Solid_White :            ///////////////////////////////////////////////////////////////////////////  Установить цвет Белый
-        demorun = 0; LED_MODE = 100; palchg = 0;
         solid = CRGB::White;
 #if LOG_ON == 1
         Serial.println(F("Solid_White"));
@@ -974,9 +1005,9 @@ void bootme() {                                                 // This is used 
 void meshwait() {                                                   // After we press a mode key, we need to wait a bit for the sequence to start.
 
 #if LOG_ON == 1
-  Serial.print(F("Mesh delay: ")); Serial.print(MESH_DELAY * 100); Serial.println(F("ms delay."));
+  Serial.print(F("Mesh delay: ")); Serial.print(psMESH_DELAY * 100); Serial.println(F("ms delay."));
 #endif
-  FastLED.delay(MESH_DELAY * 100);                                   // Here's our notamesh wait upon keypress. Oh god I'm so sorry there's a delay statement here. At least it's only used upon mode change keypress.
+  FastLED.delay(psMESH_DELAY * 100);                                   // Here's our notamesh wait upon keypress. Oh god I'm so sorry there's a delay statement here. At least it's only used upon mode change keypress.
 
 } // meshwait()
 

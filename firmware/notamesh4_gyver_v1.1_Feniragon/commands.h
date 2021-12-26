@@ -37,6 +37,8 @@
 
 #define IR_Key_Previous_mode                0x7932B41D  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
 #define IR_Key_Next_mode                    0x328B792F  // ►                        // Следующий эффект. Отключает демонстрационный режим
+#define IR_Key_OK                           0x34B48EF9  // Ok                        
+
 
 //Вариант выбора используя кнопки 0-9 и +10  кнопками 0-9 меняются только единицы числа, а кнопкой +10 увеличиваются десятки числа
 #define IR_Key_SetMode_X0                   0                                   // Набор номера выбор эффекта единицы кнопка 0
@@ -154,6 +156,7 @@
 
 #define IR_Key_Previous_mode                0x321  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
 #define IR_Key_Next_mode                    0x324  // ►                        // Следующий эффект. Отключает демонстрационный режим
+#define IR_Key_OK                           0x34B48EF9  // Ok                        
 
 //Вариант выбора используя кнопки 0-9 и +10  кнопками 0-9 меняются только единицы числа, а кнопкой +10 увеличиваются десятки числа
 #define IR_Key_SetMode_X0                   0                                   // Набор номера выбор эффекта единицы кнопка 0
@@ -269,6 +272,7 @@
 
 #define IR_Key_Previous_mode                0xB286CB25  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
 #define IR_Key_Next_mode                    0xDADC4E65  // ►                        // Следующий эффект. Отключает демонстрационный режим
+#define IR_Key_OK                           0x34B48EF9  // Ok                        
 
 //Вариант выбора используя кнопки 0-9  кнопками 0-9 число сдвигается на разряд и добавляется единица, соответствующая номеру кнопки
 #define IR_Key_SetMode_0                    0x5A7AF6F9  //0                         // Набор номера выбор эффекта сдвиг + кнопка 0
@@ -305,6 +309,8 @@
 #endif
 #endif
 
+#define REMOTE_TYPE 3       // 0 - без пульта, 1 - пульт от WAVGAT, 2 - пульт от KEYES, 3 - кастомный пульт
+// система может работать С ЛЮБЫМ ИК ПУЛЬТОМ (практически). Коды для своего пульта можно задать начиная со строки 160 в прошивке. Коды пультов определяются скетчем IRtest_2.0, читай инструкцию
 
 // ----- КНОПКИ ПУЛЬТА WAVGAT -----
 #if REMOTE_TYPE == 1
@@ -350,23 +356,23 @@
 
 // ----- КНОПКИ СВОЕГО ПУЛЬТА -----
 #if REMOTE_TYPE == 3
-#define BUTT_UP     0xE51CA6AD
-#define BUTT_DOWN   0xD22353AD
-#define BUTT_LEFT   0x517068AD
-#define BUTT_RIGHT  0xAC2A56AD
-#define BUTT_OK     0x1B92DDAD
-#define BUTT_1      0x68E456AD
-#define BUTT_2      0xF08A26AD
-#define BUTT_3      0x151CD6AD
-#define BUTT_4      0x18319BAD
-#define BUTT_5      0xF39EEBAD
-#define BUTT_6      0x4AABDFAD
-#define BUTT_7      0xE25410AD
-#define BUTT_8      0x297C76AD
-#define BUTT_9      0x14CE54AD
-#define BUTT_0      0xC089F6AD
-#define BUTT_STAR   0xAF3F1BAD  // *
-#define BUTT_HASH   0x38379AD   // #
+#define BUTT_UP     IR_Key_Brightness_plus
+#define BUTT_DOWN   IR_Key_Brightness_minus
+#define BUTT_LEFT   IR_Key_Previous_mode
+#define BUTT_RIGHT  IR_Key_Next_mode
+#define BUTT_OK     IR_Key_OK
+#define BUTT_1      IR_Key_SetMode_1
+#define BUTT_2      IR_Key_SetMode_2
+#define BUTT_3      IR_Key_SetMode_3
+#define BUTT_4      IR_Key_SetMode_4
+#define BUTT_5      IR_Key_SetMode_5
+#define BUTT_6      IR_Key_SetMode_6
+#define BUTT_7      IR_Key_SetMode_7
+#define BUTT_8      IR_Key_SetMode_8
+#define BUTT_9      IR_Key_SetMode_9
+#define BUTT_0      IR_Key_SetMode_0
+#define BUTT_STAR   IR_Key_Demo_MyMode_Random  // *
+#define BUTT_HASH   IR_Key_Demo_MyMode   // #
 #endif
 
 #endif //COMMANDS_H

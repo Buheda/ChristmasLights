@@ -25,12 +25,12 @@
 */
 
 // include PinChangeInterrupt library* BEFORE IRLremote to acces more pins if needed
-//#include "PinChangeInterrupt.h"
+#include "PinChangeInterrupt.h"
 
 #include "IRLremote.h"
 
 // Choose a valid PinInterrupt or PinChangeInterrupt* pin of your Arduino board
-#define pinIR 2
+#define pinIR 8
 
 // Choose the IR protocol of your remote. See the other example for this.
 CNec IRLremote;
