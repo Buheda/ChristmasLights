@@ -105,7 +105,7 @@ int colorMusic[3];
 float colorMusic_f[3], colorMusic_aver[3];
 boolean colorMusicFlash[3], strobeUp_flag, strobeDwn_flag;
 int thisBright[3], strobe_bright = 0;
-unsigned int light_time = psSTROBE_PERIOD * STROBE_DUTY / 100;
+//unsigned int light_time = psSTROBE_PERIOD * STROBE_DUTY / 100;
 volatile boolean ir_flag;
 boolean settings_mode;
 int freq_max;
@@ -294,13 +294,13 @@ void animation() {
           break;
       }
       break;
-    case 5:
+   /* case 5:
       if (strobe_bright > 0)
         for (int i = 0; i < NUM_LEDS; i++) leds[i] = CHSV(STROBE_COLOR, STROBE_SAT, strobe_bright);
       else
         for (int i = 0; i < NUM_LEDS; i++) leds[i] = CHSV(psEMPTY_COLOR, 255, psEMPTY_BRIGHT);
-      break;
-    case 6:
+      break;*/
+    /*case 6:
       switch (psLIGHT_MODE) {
         case 0: for (int i = 0; i < NUM_LEDS; i++) leds[i] = CHSV(psLIGHT_COLOR, psLIGHT_SAT, 255);
           break;
@@ -327,7 +327,7 @@ void animation() {
           }
           break;
       }
-      break;
+      break;*/
     case 7:
       switch (psFREQ_STROBE_MODE) {
         case 0:
@@ -410,7 +410,7 @@ void remoteTick() {
         // return to CristmasMusic
         case IR_Key_Rotate:
           isChristmasLight = true;
-          SetMode(0);
+              SetMode(0);
           break;
         // режимы
         case BUTT_1: psMUSIC_MODE = 0;
@@ -423,9 +423,9 @@ void remoteTick() {
           break;
         case BUTT_5: psMUSIC_MODE = 4;
           break;
-       // case BUTT_6: psMUSIC_MODE = 5;
-        //  break;
-        case BUTT_7: psMUSIC_MODE = 6;
+       /* case BUTT_6: psMUSIC_MODE = 5;
+          break;
+        case BUTT_7: psMUSIC_MODE = 6;*/
           break;
         case BUTT_8: psMUSIC_MODE = 7;
           break;
@@ -440,8 +440,8 @@ void remoteTick() {
             case 4:
             case 7: if (++psFREQ_STROBE_MODE > 3) psFREQ_STROBE_MODE = 0;
               break;
-            case 6: if (++psLIGHT_MODE > 2) psLIGHT_MODE = 0;
-              break;
+            /*case 6: if (++psLIGHT_MODE > 2) psLIGHT_MODE = 0;
+              break;*/
           }
           break;
         case BUTT_OK: digitalWrite(MLED_PIN, settings_mode ^ MLED_ON); settings_mode = !settings_mode;
@@ -460,9 +460,9 @@ void remoteTick() {
               case 3:
               case 4: psMAX_COEF_FREQ = smartIncrFloat(psMAX_COEF_FREQ, 0.1, 0, 5);
                 break;
-              case 5: psSTROBE_PERIOD = smartIncr(psSTROBE_PERIOD, 20, 1, 1000);
-                break;
-              case 6:
+             /* case 5: psSTROBE_PERIOD = smartIncr(psSTROBE_PERIOD, 20, 1, 1000);
+                break;*/
+              /*case 6:
                 switch (psLIGHT_MODE) {
                   case 0: psLIGHT_SAT = smartIncr(psLIGHT_SAT, 20, 0, 255);
                     break;
@@ -471,7 +471,7 @@ void remoteTick() {
                   case 2: psRAINBOW_STEP_2 = smartIncrFloat(psRAINBOW_STEP_2, 0.5, 0.5, 10);
                     break;
                 }
-                break;
+                break;*/
               case 7: psMAX_COEF_FREQ = smartIncrFloat(psMAX_COEF_FREQ, 0.1, 0.0, 10);
                 break;
               case 8: psHUE_START = smartIncr(psHUE_START, 10, 0, 255);
@@ -493,9 +493,9 @@ void remoteTick() {
               case 3:
               case 4: psMAX_COEF_FREQ = smartIncrFloat(psMAX_COEF_FREQ, -0.1, 0, 5);
                 break;
-              case 5: psSTROBE_PERIOD = smartIncr(psSTROBE_PERIOD, -20, 1, 1000);
-                break;
-              case 6:
+             /* case 5: psSTROBE_PERIOD = smartIncr(psSTROBE_PERIOD, -20, 1, 1000);
+                break;*/
+             /* case 6:
                 switch (psLIGHT_MODE) {
                   case 0: psLIGHT_SAT = smartIncr(psLIGHT_SAT, -20, 0, 255);
                     break;
@@ -504,7 +504,7 @@ void remoteTick() {
                   case 2: psRAINBOW_STEP_2 = smartIncrFloat(psRAINBOW_STEP_2, -0.5, 0.5, 10);
                     break;
                 }
-                break;
+                break;*/
               case 7: psMAX_COEF_FREQ = smartIncrFloat(psMAX_COEF_FREQ, -0.1, 0.0, 10);
                 break;
               case 8: psHUE_START = smartIncr(psHUE_START, -10, 0, 255);
@@ -526,9 +526,9 @@ void remoteTick() {
               case 3:
               case 4: psSMOOTH_FREQ = smartIncrFloat(psSMOOTH_FREQ, -0.05, 0.05, 1);
                 break;
-              case 5: psSTROBE_SMOOTH = smartIncr(psSTROBE_SMOOTH, -20, 0, 255);
-                break;
-              case 6:
+             /* case 5: psSTROBE_SMOOTH = smartIncr(psSTROBE_SMOOTH, -20, 0, 255);
+                break;*/
+             /* case 6:
                 switch (psLIGHT_MODE) {
                   case 0: psLIGHT_COLOR = smartIncr(psLIGHT_COLOR, -10, 0, 255);
                     break;
@@ -537,7 +537,7 @@ void remoteTick() {
                   case 2: psRAINBOW_PERIOD = smartIncr(psRAINBOW_PERIOD, -1, -20, 20);
                     break;
                 }
-                break;
+                break;*/
               case 7: psRUNNING_SPEED = smartIncr(psRUNNING_SPEED, -10, 1, 255);
                 break;
               case 8: psHUE_STEP = smartIncr(psHUE_STEP, -1, 1, 255);
@@ -559,9 +559,9 @@ void remoteTick() {
               case 3:
               case 4: psSMOOTH_FREQ = smartIncrFloat(psSMOOTH_FREQ, 0.05, 0.05, 1);
                 break;
-              case 5: psSTROBE_SMOOTH = smartIncr(psSTROBE_SMOOTH, 20, 0, 255);
-                break;
-              case 6:
+             /* case 5: psSTROBE_SMOOTH = smartIncr(psSTROBE_SMOOTH, 20, 0, 255);
+                break;*/
+             /* case 6:
                 switch (psLIGHT_MODE) {
                   case 0: psLIGHT_COLOR = smartIncr(psLIGHT_COLOR, 10, 0, 255);
                     break;
@@ -570,7 +570,7 @@ void remoteTick() {
                   case 2: psRAINBOW_PERIOD = smartIncr(psRAINBOW_PERIOD, 1, -20, 20);
                     break;
                 }
-                break;
+                break;*/
               case 7: psRUNNING_SPEED = smartIncr(psRUNNING_SPEED, 10, 1, 255);
                 break;
               case 8: psHUE_STEP = smartIncr(psHUE_STEP, 1, 1, 255);
@@ -705,7 +705,7 @@ void mainLoop() {
         }
         animation();
       }
-      if (psMUSIC_MODE == 5) {
+      /*if (psMUSIC_MODE == 5) {
         if ((long)millis() - strobe_timer > psSTROBE_PERIOD) {
           strobe_timer = millis();
           strobeUp_flag = true;
@@ -732,8 +732,8 @@ void mainLoop() {
           }
         }
         animation();
-      }
-      if (psMUSIC_MODE == 6) animation();
+      }*/
+      //if (psMUSIC_MODE == 6) animation();
 
       if (!IRLremote.receiving())    // если на ИК приёмник не приходит сигнал (без этого НЕ РАБОТАЕТ!)
         FastLED.show();         // отправить значения на ленту

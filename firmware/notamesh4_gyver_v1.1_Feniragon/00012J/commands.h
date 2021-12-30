@@ -37,7 +37,7 @@
 
 #define IR_Key_Previous_mode                0x7932B41D  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
 #define IR_Key_Next_mode                    0x328B792F  // ►                        // Следующий эффект. Отключает демонстрационный режим
-#define IR_Key_OK                           0x34B48EF9  // Ok
+#define IR_Key_OK                           0x34B48EF9  // Ok                        
 
 
 //Вариант выбора используя кнопки 0-9 и +10  кнопками 0-9 меняются только единицы числа, а кнопкой +10 увеличиваются десятки числа
@@ -263,16 +263,16 @@
 #define IR_Key_Length_Garland_plus          0         // L/R                    // Увеличить количество светодиодов в гирлянде 
 #define IR_Key_Length_Garland_minus         0         // Slow                   // Уменьшить количество светодиодов в гирлянде
 #define IR_Key_Rotate                       0xBDF5D2F9  // any key                   // Сменить направление движения эффектов
-#define IR_Key_Speed_minus                  0xCF40ADF9  // |<<                       // Замедлить движение
-#define IR_Key_Speed_plus                   0x6DC229F9  // >>|                       // Ускорить движение
+#define IR_Key_Speed_minus                  0x3EA934F9  // |<<                       // Замедлить движение
+#define IR_Key_Speed_plus                   0xD25572F9  // >>|                       // Ускорить движение
 
-#define IR_Key_Glitter                      0x881847F9  // menu              // Включить/выключить сверкание
-#define IR_Key_BackGround                   0x451EC4F9  // play list                   // Включить/выключить заполнение фона
-#define IR_Key_Candle                       0xEA64D6F9   // title list                  // Включить/выключить свечки
+#define IR_Key_Glitter                      0x35E846F9  // menu              // Включить/выключить сверкание
+#define IR_Key_BackGround                   0x451EC4F9  // cancel                   // Включить/выключить заполнение фона
+#define IR_Key_Candle                       0x451EC4F9   // play list                  // Включить/выключить свечки
 
 #define IR_Key_Previous_mode                0x9C77E7F9  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
 #define IR_Key_Next_mode                    0x5B6E4F9   // ►                        // Следующий эффект. Отключает демонстрационный режим
-#define IR_Key_OK                           0x996322F9  // Ok
+#define IR_Key_OK                           0x996322F9  // Ok                        
 
 //Вариант выбора используя кнопки 0-9  кнопками 0-9 число сдвигается на разряд и добавляется единица, соответствующая номеру кнопки
 #define IR_Key_SetMode_0                    0xA33C70F9  //0                         // Набор номера выбор эффекта сдвиг + кнопка 0

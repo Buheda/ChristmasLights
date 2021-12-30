@@ -26,8 +26,8 @@ float psSMOOTH_FREQ = 0.8;          // коэффициент плавности
 float psMAX_COEF_FREQ = 1.2;        // коэффициент порога для "вспышки" цветомузыки (по умолчанию 1.5)
 
 // ----- режим стробоскопа
-uint16_t psSTROBE_PERIOD = 140;     // период вспышек, миллисекунды
-uint8_t psSTROBE_SMOOTH = 200;         // скорость нарастания/угасания вспышки (0 - 255)
+//uint16_t psSTROBE_PERIOD = 140;     // период вспышек, миллисекунды
+//uint8_t psSTROBE_SMOOTH = 200;         // скорость нарастания/угасания вспышки (0 - 255)
 
 // ----- настройки радуги
 float psRAINBOW_STEP = 5.00;        // шаг изменения цвета радуги
@@ -36,7 +36,7 @@ float psRAINBOW_STEP = 5.00;        // шаг изменения цвета ра
 byte psLIGHT_COLOR = 0;             // начальный цвет подсветки
 byte psLIGHT_SAT = 255;             // начальная насыщенность подсветки
 float psRAINBOW_STEP_2 = 0.5;
-byte psCOLOR_SPEED = 100;
+//byte psCOLOR_SPEED = 100;
 int psRAINBOW_PERIOD = 1;
 
 // ----- режим бегущих частот
@@ -48,7 +48,8 @@ byte psHUE_STEP = 5;
 
 unsigned long eeprom_timer;
 uint8_t psMUSIC_MODE = MODE;
-uint8_t psFREQ_STROBE_MODE, psLIGHT_MODE;
+//uint8_t  psLIGHT_MODE;
+uint8_t psFREQ_STROBE_MODE;
 boolean ONstate = true, eeprom_flag;
 
 #if KEEP_SETTINGS == 1
@@ -68,18 +69,18 @@ void readEEPROM() {
 #if KEEP_SETTINGS == 1
   EEPROM.get(1, psMUSIC_MODE);
   EEPROM.get(2, psFREQ_STROBE_MODE);
-  EEPROM.get(3, psLIGHT_MODE);
+  //EEPROM.get(3, psLIGHT_MODE);
   EEPROM.get(4, psRAINBOW_STEP);
   EEPROM.get(5, psMAX_COEF_FREQ);
-  EEPROM.get(12, psSTROBE_PERIOD);
+  //EEPROM.get(12, psSTROBE_PERIOD);
   EEPROM.get(16, psLIGHT_SAT);
   EEPROM.get(20, psRAINBOW_STEP_2);
   EEPROM.get(24, psHUE_START);
   EEPROM.get(28, psSMOOTH);
   EEPROM.get(32, psSMOOTH_FREQ);
-  EEPROM.get(36, psSTROBE_SMOOTH);
+  //EEPROM.get(36, psSTROBE_SMOOTH);
   EEPROM.get(40, psLIGHT_COLOR);
-  EEPROM.get(44, psCOLOR_SPEED);
+  //EEPROM.get(44, psCOLOR_SPEED);
   EEPROM.get(48, psRAINBOW_PERIOD);
   EEPROM.get(52, psRUNNING_SPEED);
   EEPROM.get(56, psHUE_STEP);
@@ -126,18 +127,18 @@ void updateEEPROM() {
 #if KEEP_SETTINGS == 1
   EEPROM.put(1, psMUSIC_MODE);
   EEPROM.put(2, psFREQ_STROBE_MODE);
-  EEPROM.put(3, psLIGHT_MODE);
+  //EEPROM.put(3, psLIGHT_MODE);
   EEPROM.put(4, psRAINBOW_STEP);
   EEPROM.put(8, psMAX_COEF_FREQ);
-  EEPROM.put(12, psSTROBE_PERIOD);
+  //EEPROM.put(12, psSTROBE_PERIOD);
   EEPROM.put(16, psLIGHT_SAT);
   EEPROM.put(20, psRAINBOW_STEP_2);
   EEPROM.put(24, psHUE_START);
   EEPROM.put(28, psSMOOTH);
   EEPROM.put(32, psSMOOTH_FREQ);
-  EEPROM.put(36, psSTROBE_SMOOTH);
+  //EEPROM.put(36, psSTROBE_SMOOTH);
   EEPROM.put(40, psLIGHT_COLOR);
-  EEPROM.put(44, psCOLOR_SPEED);
+  //EEPROM.put(44, psCOLOR_SPEED);
   EEPROM.put(48, psRAINBOW_PERIOD);
   EEPROM.put(52, psRUNNING_SPEED);
   EEPROM.put(56, psHUE_STEP);

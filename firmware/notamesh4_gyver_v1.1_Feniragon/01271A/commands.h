@@ -37,7 +37,7 @@
 
 #define IR_Key_Previous_mode                0x7932B41D  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
 #define IR_Key_Next_mode                    0x328B792F  // ►                        // Следующий эффект. Отключает демонстрационный режим
-#define IR_Key_OK                           0x34B48EF9  // Ok
+#define IR_Key_OK                           0x34B48EF9  // Ok                        
 
 
 //Вариант выбора используя кнопки 0-9 и +10  кнопками 0-9 меняются только единицы числа, а кнопкой +10 увеличиваются десятки числа
@@ -251,50 +251,50 @@
 //IRLremoTE
 
 // кнопка на пульте
-#define IR_Key_Power                        0xB17286F9  // power                    // выключить и включить гирлянду, а не просто послылать цвет черный. 
-#define IR_Key_Brightness_plus              0x7AFC4FF9  // ▲                       // Увеличить максимальную яркость 
-#define IR_Key_Brightness_minus             0x8CBA9F9   // ▼                       // Уменьшить максимальную яркость 
-#define IR_Key_Reset                        0x2D5E59F9  // open/close               // Сброс всех настроек и перезагрузка 
-#define IR_Key_Demo                         0xD5B19032  // +                        // Включит демо режим (перебор) 
-#define IR_Key_Demo_Random                  0x3C764B32  // -                        // Включит демо режим (Случайно) 
-#define IR_Key_Demo_MyMode                  0x638861F9  // ^                        // Включит демо режим (перебор) 
-#define IR_Key_Demo_MyMode_Random           0xFA4964F9  // ♭                        // Включит демо режим (Случайно) 
+#define IR_Key_Power                        0xFF720FF9  // power                    // выключить и включить гирлянду, а не просто послылать цвет черный. 
+#define IR_Key_Brightness_plus              0xE8BB43DD  // ▲                       // Увеличить максимальную яркость 
+#define IR_Key_Brightness_minus             0x8F761EFD  // ▼                       // Уменьшить максимальную яркость 
+#define IR_Key_Reset                        0xCCA949F9  // open/close               // Сброс всех настроек и перезагрузка 
+#define IR_Key_Demo                         0xAC0DE76D  // +                        // Включит демо режим (перебор) 
+#define IR_Key_Demo_Random                  0x5D8FBBF9  // -                        // Включит демо режим (Случайно) 
+#define IR_Key_Demo_MyMode                  0x1A9638F9  // #                        // Включит демо режим (перебор) 
+#define IR_Key_Demo_MyMode_Random           0xC0B4A489  // ♭                        // Включит демо режим (Случайно) 
 
 #define IR_Key_Length_Garland_plus          0         // L/R                    // Увеличить количество светодиодов в гирлянде 
 #define IR_Key_Length_Garland_minus         0         // Slow                   // Уменьшить количество светодиодов в гирлянде
-#define IR_Key_Rotate                       0xBDF5D2F9  // any key                   // Сменить направление движения эффектов
-#define IR_Key_Speed_minus                  0xCF40ADF9  // |<<                       // Замедлить движение
-#define IR_Key_Speed_plus                   0x6DC229F9  // >>|                       // Ускорить движение
+#define IR_Key_Rotate                       0x94B5DF9  // repeat                   // Сменить направление движения эффектов
+#define IR_Key_Speed_minus                  0xD36DD2F9  // <<                       // Замедлить движение
+#define IR_Key_Speed_plus                   0xD0590DF9  // >>                       // Ускорить движение
 
-#define IR_Key_Glitter                      0x881847F9  // menu              // Включить/выключить сверкание
-#define IR_Key_BackGround                   0x451EC4F9  // play list                   // Включить/выключить заполнение фона
-#define IR_Key_Candle                       0xEA64D6F9   // title list                  // Включить/выключить свечки
+#define IR_Key_Glitter                      0x35E846F9  // search song              // Включить/выключить сверкание
+#define IR_Key_BackGround                   0x64054BF9  // cancel                   // Включить/выключить заполнение фона
+#define IR_Key_Candle                       0xD4636AAD   // reserve                  // Включить/выключить свечки
 
-#define IR_Key_Previous_mode                0x9C77E7F9  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
-#define IR_Key_Next_mode                    0x5B6E4F9   // ►                        // Следующий эффект. Отключает демонстрационный режим
-#define IR_Key_OK                           0x996322F9  // Ok
+#define IR_Key_Previous_mode                0xB286CB25  // ◄                        // Предыдущий эффект. Отключает демонстрационный режим
+#define IR_Key_Next_mode                    0xDADC4E65  // ►                        // Следующий эффект. Отключает демонстрационный режим
+#define IR_Key_OK                           0x34B48EF9  // Ok                        
 
 //Вариант выбора используя кнопки 0-9  кнопками 0-9 число сдвигается на разряд и добавляется единица, соответствующая номеру кнопки
-#define IR_Key_SetMode_0                    0xA33C70F9  //0                         // Набор номера выбор эффекта сдвиг + кнопка 0
-#define IR_Key_SetMode_1                    0xA027ABF9  //1                         // Набор номера выбор эффекта сдвиг + кнопка 1
-#define IR_Key_SetMode_2                    0x36E8AEF9  //2                         // Набор номера выбор эффекта сдвиг + кнопка 2
-#define IR_Key_SetMode_3                    0x33D3E9F9  //3                         // Набор номера выбор эффекта сдвиг + кнопка 3
-#define IR_Key_SetMode_4                    0xD919FBF9  //4                         // Набор номера выбор эффекта сдвиг + кнопка 4
-#define IR_Key_SetMode_5                    0xD60536F9  //5                         // Набор номера выбор эффекта сдвиг + кнопка 5
-#define IR_Key_SetMode_6                    0x6CC639F9  //6                         // Набор номера выбор эффекта сдвиг + кнопка 6
-#define IR_Key_SetMode_7                    0x69B174F9  //7                         // Набор номера выбор эффекта сдвиг + кнопка 7
-#define IR_Key_SetMode_8                    0xF780CEF9  //8                         // Набор номера выбор эффекта сдвиг + кнопка 8
-#define IR_Key_SetMode_9                    0xF46C09F9  //9                         // Набор номера выбор эффекта сдвиг + кнопка 9
+#define IR_Key_SetMode_0                    0x5A7AF6F9  //0                         // Набор номера выбор эффекта сдвиг + кнопка 0
+#define IR_Key_SetMode_1                    0xF13BF9F9  //1                         // Набор номера выбор эффекта сдвиг + кнопка 1
+#define IR_Key_SetMode_2                    0xEE2734F9  //2                         // Набор номера выбор эффекта сдвиг + кнопка 2
+#define IR_Key_SetMode_3                    0xAE4276F9  //3                         // Набор номера выбор эффекта сдвиг + кнопка 3
+#define IR_Key_SetMode_4                    0xE1A3E8F9  //4                         // Набор номера выбор эффекта сдвиг + кнопка 4
+#define IR_Key_SetMode_5                    0x38FD0BF9  //5                         // Набор номера выбор эффекта сдвиг + кнопка 5
+#define IR_Key_SetMode_6                    0xAB2DB1F9  //6                         // Набор номера выбор эффекта сдвиг + кнопка 6
+#define IR_Key_SetMode_7                    0x755026F9  //7                         // Набор номера выбор эффекта сдвиг + кнопка 7
+#define IR_Key_SetMode_8                    0xB849A9F9  //8                         // Набор номера выбор эффекта сдвиг + кнопка 8
+#define IR_Key_SetMode_9                    0x7864EBF9  //9                         // Набор номера выбор эффекта сдвиг + кнопка 9
 
-#define IR_Key_Show_ModeId                  0x5DDC38F9    // info             // Гирлянда проморгает номер эффекта
-#define IR_Key_Save_Mode                    0xC46BD9F9    // rec                  // Сохранить эффект как запускающийся первым
-#define IR_Key_Delay_minus                  0xA6B479F9    // cancel              // Уменьшить задержку на 100ms (используя белые светодиоды)
-#define IR_Key_Delay_plus                   0x3B946FF9    // repeat                 // Увеличить задержку на 100ms (используя белые светодиоды)
+#define IR_Key_Show_ModeId                  0x6BC5D1F9    // DISK/SKIP              // Гирлянда проморгает номер эффекта
+#define IR_Key_Save_Mode                    0x286D4F9    // audio                  // Сохранить эффект как запускающийся первым
+#define IR_Key_Delay_minus                  0x90935A7D    // highlight              // Уменьшить задержку на 100ms (используя белые светодиоды)
+#define IR_Key_Delay_plus                   0x9BA39E31    // dimmer                 // Увеличить задержку на 100ms (используя белые светодиоды)
 
-#define IR_Key_Palette_Stop                 0x4832CF9  // ■                        // Остановка вращения палитры        Остановить перебор Палитр
-#define IR_Key_Palette_Previous             0x3EA934F9  // ◄◄                     // Выберите предыдущую палитру       Установить предыдущую палитру
-#define IR_Key_Palette_Next                 0xD25572F9  // ►►                     // Выберите следующую палитру        Установить следующую палитру
-#define IR_Key_Palette_Auto                 0x70D6EEF9  // ►||                     // Включить поворот палитры          Продолжить автоматический перебор палитр
+#define IR_Key_Palette_Stop                 0x9CF79BF9  // ■                        // Остановка вращения палитры        Остановить перебор Палитр
+#define IR_Key_Palette_Previous             0x249D6BF9  // |◄◄                     // Выберите предыдущую палитру       Установить предыдущую палитру
+#define IR_Key_Palette_Next                 0x27B230F9  // ►►|                     // Выберите следующую палитру        Установить следующую палитру
+#define IR_Key_Palette_Auto                 0x63698F9  // ► ||                     // Включить поворот палитры          Продолжить автоматический перебор палитр
 
 #define IR_Key_Solid_Black                  0  //                        //  Установить цвет Черный  (Выключает гирлянду, Например перед тем как сказать елочка зажгись на детском утреннике)
 #define IR_Key_Solid_Red                    0  // >>                     //  Установить цвет Красный

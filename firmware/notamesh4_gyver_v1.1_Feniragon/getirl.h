@@ -118,11 +118,12 @@ void setPrevAvailableMode() {
 void getirl() {                                                   // This is the IR function that gets the value and selects/performs command.
 
   if (powerOff && Command != IR_Key_Power) {
-#if LOG_ON == 1
-    Serial.print(F("Command: 0x")); Serial.println(Command, HEX);
-#endif
+/*#if LOG_ON == 1
+    Serial.print(F("PowerOff: Command: 0x")); Serial.println(Command, HEX);
+#endif*/
+    Protocol = 0;
     return;
-  } 
+  }
 
 
   if (Protocol) {
@@ -141,6 +142,7 @@ void getirl() {                                                   // This is the
         } else {
           LEDS.setBrightness(psMAX_BRIGHT);
         }
+        Protocol = 0;
 #if LOG_ON == 1
         Serial.print(F("powerOff= ")); Serial.println(powerOff);
 #endif

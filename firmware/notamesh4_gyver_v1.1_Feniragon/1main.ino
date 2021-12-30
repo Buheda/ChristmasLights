@@ -217,10 +217,12 @@ void setup() {
     case 4:   psLED_MODE = pgm_read_byte(my_mode + random8(my_mode_count)); break;   // демо 4
   }
 #endif
+
 #endif
   gCurrentPalette = gGradientPalettes[0];
   gTargetPalette = gGradientPalettes[0];
   strobe_mode(psLED_MODE, 1);                                                        // Initialize the first sequence
+  newMode = psLED_MODE;
 
 #if LOG_ON == 1
   if (DEMO_MODE) {
@@ -494,7 +496,7 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
 #if LOG_ON == 1
     Serial.print(F("Mode: "));
     Serial.println(mode);
-    Serial.println(millis());
+    //Serial.println(millis());
 #endif
 #if PALETTE_TIME>0
     if (palchg == 0) palchg = 3;
@@ -503,15 +505,16 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
 #endif
   }
 
+  // psLED_MODE = mode;
   switch (mode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
-   /* case  0: if (mc) {
+    /*case  0: if (mc) {
         psTHIS_DELAY = 10;
         palchg = 0;
       } blendwave(); break;
-    case  1: if (mc) {
+      case  1: if (mc) {
         psTHIS_DELAY = 10;
         palchg = 0;
-      } rainbow_beat(); break;
+      } rainbow_beat(); break;*/
     case  2: if (mc) {
         psTHIS_DELAY = 10;
         allfreq = 2;
@@ -525,24 +528,24 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thiscutoff = 128;
         thatcutoff = 192;
       } two_sin(); break;
-    case  3: if (mc) {
-        psTHIS_DELAY = 20;
-        allfreq = 4;
-        bgclr = 0;
-        bgbri = 0;
-        startindex = 64;
-        thisinc = 2;
-        thiscutoff = 224;
-        thisphase = 0;
-        thiscutoff = 224;
-        thisrot = 0;
-        thisspeed = 4;
-        wavebright = 255;
-      } one_sin_pal(); break;
+    /* case  3: if (mc) {
+         psTHIS_DELAY = 20;
+         allfreq = 4;
+         bgclr = 0;
+         bgbri = 0;
+         startindex = 64;
+         thisinc = 2;
+         thiscutoff = 224;
+         thisphase = 0;
+         thiscutoff = 224;
+         thisrot = 0;
+         thisspeed = 4;
+         wavebright = 255;
+       } one_sin_pal(); break;*/
     case  4: if (mc) {
         psTHIS_DELAY = 10;
       } noise8_pal(); break;
-    case  5: if (mc) {
+    /*case  5: if (mc) {
         psTHIS_DELAY = 10;
         allfreq = 4;
         thisspeed = -1;
@@ -555,7 +558,7 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thiscutoff = 64;
         thatcutoff = 192;
       } two_sin(); break;
-    case  6: if (mc) {
+      case  6: if (mc) {
         psTHIS_DELAY = 20;
         allfreq = 10;
         bgclr = 64;
@@ -569,21 +572,21 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thisspeed = 4;
         wavebright = 255;
       } one_sin_pal(); break;
-    case  7: if (mc) {
+      /* case  7: if (mc) {
         psTHIS_DELAY = 10;
         numdots = 2;
         thisfade = 16;
         thisbeat = 8;
         thisdiff = 64;
       } juggle_pal(); break;
-    case  8: if (mc) {
+      case  8: if (mc) {
         psTHIS_DELAY = 40;
         thisindex = 128;
         thisdir = 1;
         thisrot = 0;
         bgclr = 200;
         bgbri = 6;
-      } matrix_pal(); break;
+      } matrix_pal(); break;*/
     case  9: if (mc) {
         psTHIS_DELAY = 10;
         allfreq = 6;
@@ -597,43 +600,43 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thiscutoff = 64;
         thatcutoff = 64;
       } two_sin(); break;
-    case 10: if (mc) {
-        psTHIS_DELAY = 20;
-        allfreq = 16;
-        bgclr = 0;
-        bgbri = 0;
-        startindex = 64;
-        thisinc = 2;
-        thiscutoff = 224;
-        thisphase = 0;
-        thiscutoff = 224;
-        thisrot = 0;
-        thisspeed = 4;
-        wavebright = 255;
-      } one_sin_pal(); break;
-    case 11: if (mc) {
-        psTHIS_DELAY = 50;
-        mul1 = 5;
-        mul2 = 8;
-        mul3 = 7;
-      } three_sin_pal(); break;
-    case 12: if (mc) {
-        psTHIS_DELAY = 10;
-      } serendipitous_pal(); break;
-    case 13: if (mc) {
-        psTHIS_DELAY = 20;
-        allfreq = 8;
-        bgclr = 0;
-        bgbri = 4;
-        startindex = 64;
-        thisinc = 2;
-        thiscutoff = 224;
-        thisphase = 0;
-        thiscutoff = 224;
-        thisrot = 0;
-        thisspeed = 4;
-        wavebright = 255;
-      } one_sin_pal(); break;
+    /*  case 10: if (mc) {
+          psTHIS_DELAY = 20;
+          allfreq = 16;
+          bgclr = 0;
+          bgbri = 0;
+          startindex = 64;
+          thisinc = 2;
+          thiscutoff = 224;
+          thisphase = 0;
+          thiscutoff = 224;
+          thisrot = 0;
+          thisspeed = 4;
+          wavebright = 255;
+        } one_sin_pal(); break;
+      case 11: if (mc) {
+          psTHIS_DELAY = 50;
+          mul1 = 5;
+          mul2 = 8;
+          mul3 = 7;
+        } three_sin_pal(); break;
+      case 12: if (mc) {
+          psTHIS_DELAY = 10;
+        } serendipitous_pal(); break;
+      case 13: if (mc) {
+          psTHIS_DELAY = 20;
+          allfreq = 8;
+          bgclr = 0;
+          bgbri = 4;
+          startindex = 64;
+          thisinc = 2;
+          thiscutoff = 224;
+          thisphase = 0;
+          thiscutoff = 224;
+          thisrot = 0;
+          thisspeed = 4;
+          wavebright = 255;
+        } one_sin_pal(); break;*/
     case 14: if (mc) {
         psTHIS_DELAY = 10;
         allfreq = 20;
@@ -647,90 +650,90 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thiscutoff = 64;
         thatcutoff = 128;
       } two_sin(); break;
-    case 15: if (mc) {
-        psTHIS_DELAY = 50;
-        thisindex = 64;
-        thisdir = -1;
-        thisrot = 1;
-        bgclr = 100;
-        bgbri = 10;
-      } matrix_pal(); break;
+    /* case 15: if (mc) {
+         psTHIS_DELAY = 50;
+         thisindex = 64;
+         thisdir = -1;
+         thisrot = 1;
+         bgclr = 100;
+         bgbri = 10;
+       } matrix_pal(); break;*/
     case 16: if (mc) {
         psTHIS_DELAY = 10;
       } noise8_pal(); break; // By: Andrew Tuline
-    case 17: if (mc) {
-        psTHIS_DELAY = 10;
-      } plasma(11, 23, 4, 18); break;
-    case 18: if (mc) {
-        psTHIS_DELAY = 20;
-        allfreq = 10;
-        thisspeed = 1;
-        thatspeed = -2;
-        thishue = 48;
-        thathue = 160;
-        thisdir = -1;
-        thisrot = 1;
-        thatrot = -1;
-        thiscutoff = 128;
-        thatcutoff = 192;
-      } two_sin(); break;
-    case 19: if (mc) {
-        psTHIS_DELAY = 50;
-        palchg = 0;
-        thisdir = 1;
-        thisrot = 1;
-        thisdiff = 1;
-      } rainbow_march(); break;
+    /* case 17: if (mc) {
+         psTHIS_DELAY = 10;
+       } plasma(11, 23, 4, 18); break;
+      case 18: if (mc) {
+         psTHIS_DELAY = 20;
+         allfreq = 10;
+         thisspeed = 1;
+         thatspeed = -2;
+         thishue = 48;
+         thathue = 160;
+         thisdir = -1;
+         thisrot = 1;
+         thatrot = -1;
+         thiscutoff = 128;
+         thatcutoff = 192;
+       } two_sin(); break;
+      case 19: if (mc) {
+         psTHIS_DELAY = 50;
+         palchg = 0;
+         thisdir = 1;
+         thisrot = 1;
+         thisdiff = 1;
+       } rainbow_march(); break;*/
     case 20: if (mc) {
         psTHIS_DELAY = 10;
         mul1 = 6;
         mul2 = 9;
         mul3 = 11;
       } three_sin_pal(); break;
-    case 21: if (mc) {
-        psTHIS_DELAY = 10;
-        palchg = 0;
-        thisdir = 1;
-        thisrot = 2;
-        thisdiff = 10;
-      } rainbow_march(); break;
-    case 22: if (mc) {
-        psTHIS_DELAY = 20;
-        palchg = 0;
-        hxyinc = random16(1, 15);
-        octaves = random16(1, 3);
-        hue_octaves = random16(1, 5);
-        hue_scale = random16(10, 50);
-        x = random16();
-        xscale = random16();
-        hxy = random16();
-        hue_time = random16();
-        hue_speed = random16(1, 3);
-        x_speed = random16(1, 30);
-      } noise16_pal(); break;
-    case 23: if (mc) {
-        psTHIS_DELAY = 20;
-        allfreq = 6;
-        bgclr = 0;
-        bgbri = 0;
-        startindex = 64;
-        thisinc = 2;
-        thiscutoff = 224;
-        thisphase = 0;
-        thiscutoff = 224;
-        thisrot = 0;
-        thisspeed = 4;
-        wavebright = 255;
-      } one_sin_pal(); break;
-    case 24: if (mc) {
-        psTHIS_DELAY = 10;
-      } plasma(23, 15, 6, 7); break;
-    case 25: if (mc) {
-        psTHIS_DELAY = 20;
-        thisinc = 1;
-        thisfade = 2;
-        thisdiff = 32;
-      } confetti_pal(); break;
+    /*  case 21: if (mc) {
+          psTHIS_DELAY = 10;
+          palchg = 0;
+          thisdir = 1;
+          thisrot = 2;
+          thisdiff = 10;
+        } rainbow_march(); break;
+      case 22: if (mc) {
+          psTHIS_DELAY = 20;
+          palchg = 0;
+          hxyinc = random16(1, 15);
+          octaves = random16(1, 3);
+          hue_octaves = random16(1, 5);
+          hue_scale = random16(10, 50);
+          x = random16();
+          xscale = random16();
+          hxy = random16();
+          hue_time = random16();
+          hue_speed = random16(1, 3);
+          x_speed = random16(1, 30);
+        } noise16_pal(); break;
+      case 23: if (mc) {
+          psTHIS_DELAY = 20;
+          allfreq = 6;
+          bgclr = 0;
+          bgbri = 0;
+          startindex = 64;
+          thisinc = 2;
+          thiscutoff = 224;
+          thisphase = 0;
+          thiscutoff = 224;
+          thisrot = 0;
+          thisspeed = 4;
+          wavebright = 255;
+        } one_sin_pal(); break;
+      case 24: if (mc) {
+          psTHIS_DELAY = 10;
+        } plasma(23, 15, 6, 7); break;
+      case 25: if (mc) {
+          psTHIS_DELAY = 20;
+          thisinc = 1;
+          thisfade = 2;
+          thisdiff = 32;
+        } confetti_pal(); break;*/
     case 26: if (mc) {
         psTHIS_DELAY = 10;
         thisspeed = 2;
@@ -743,7 +746,7 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thiscutoff = 128;
         thatcutoff = 64;
       } two_sin(); break;
-    case 27: if (mc) {
+    /*case 27: if (mc) {
         psTHIS_DELAY = 30;
         thisindex = 192;
         thisdir = -1;
@@ -751,7 +754,7 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         bgclr = 50;
         bgbri = 0;
       } matrix_pal(); break;
-    case 28: if (mc) {
+      case 28: if (mc) {
         psTHIS_DELAY = 20;
         allfreq = 20;
         bgclr = 0;
@@ -765,23 +768,23 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thisspeed = 4;
         wavebright = 255;
       } one_sin_pal(); break;
-    case 29: if (mc) {
+      case 29: if (mc) {
         psTHIS_DELAY = 20;
         thisinc = 2;
         thisfade = 8;
         thisdiff = 64;
       } confetti_pal(); break;
-    case 30: if (mc) {
+      case 30: if (mc) {
         psTHIS_DELAY = 10;
       } plasma(8, 7, 9, 13); break;
-    case 31: if (mc) {
+      case 31: if (mc) {
         psTHIS_DELAY = 10;
         numdots = 4;
         thisfade = 32;
         thisbeat = 12;
         thisdiff = 20;
       } juggle_pal(); break;
-    case 32: if (mc) {
+      case 32: if (mc) {
         psTHIS_DELAY = 30;
         allfreq = 4;
         bgclr = 64;
@@ -794,29 +797,29 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         thisrot = 1;
         thisspeed = 8;
         wavebright = 255;
-      } one_sin_pal(); break;
+      } one_sin_pal(); break;*/
     case 33: if (mc) {
         psTHIS_DELAY = 50;
         mul1 = 3;
         mul2 = 4;
         mul3 = 5;
       } three_sin_pal(); break;
-    case 34: if (mc) {
+    /*case 34: if (mc) {
         psTHIS_DELAY = 10;
         palchg = 0;
         thisdir = -1;
         thisrot = 1;
         thisdiff = 5;
       } rainbow_march(); break;
-    case 35: if (mc) {
+      case 35: if (mc) {
         psTHIS_DELAY = 10;
       } plasma(11, 17, 20, 23); break;
-    case 36: if (mc) {
+      case 36: if (mc) {
         psTHIS_DELAY = 20;
         thisinc = 1;
         thisfade = 1;
       } confetti_pal(); break;
-    case 37: if (mc) {
+      case 37: if (mc) {
         psTHIS_DELAY = 20;
         palchg = 0;
         octaves = 1;
@@ -828,9 +831,9 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         hue_speed = 15;
         x_speed = 100;
       } noise16_pal(); break;
-    case 38: if (mc) {
+      case 38: if (mc) {
         psTHIS_DELAY = 10;
-      } noise8_pal(); break;
+      } noise8_pal(); break;*/
     case 39: if (mc) {
         psTHIS_DELAY = 10;
         palchg = 0;
@@ -841,7 +844,7 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
       } candles(); break;
     case 41: if (mc) {
         psTHIS_DELAY = 10;
-      } colorwaves(); break;*/
+      } colorwaves(); break;
 #if COLOR_MUSIC_AVAILABLE
     case COLOR_MUSIC_MODE: isChristmasLight = false; break;
 #endif
@@ -849,7 +852,8 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
         palchg = 0;
       } fill_solid(leds, NUM_LEDS,  solid); break;    //Установить цвет
     case 201: fill_solid(leds, NUM_LEDS, CRGB::Black); fill_solid(leds, psMESH_DELAY, CRGB(255, 255, 255)); break; //Зажеч гирлянду длинной psMESH_DELAY
-    default : SetMode(0);  break;        //нет такого режима принудительно ставим нулевой
+    default : //psLED_MODE = 0;
+      SetMode(0); break;        //нет такого режима принудительно ставим нулевой
 
   } // switch mode
 
@@ -866,6 +870,8 @@ void strobe_mode(uint8_t mode, bool mc) {                  // mc stands for 'Mod
 void demo_check() {
 
   if (demorun) {
+    Serial.println(F("demorun"));
+
     if ((millis() - demo_time) >= (DEMO_TIME * 1000L )) {         //Наступило время смены эффекта
       demo_time = millis();                                       //Запомним время
       gCurrentPaletteNumber = random8(0, gGradientPaletteCount);  //Случайно поменяем палитру
@@ -876,6 +882,8 @@ void demo_check() {
           newMode = pgm_read_byte(available_mode + random8(available_mode_count));
 #else
           newMode = random8(0, maxMode);
+          if (newMode == COLOR_MUSIC_MODE)
+            newMode = 0;
 #endif
           break;
 #if MY_MODE
@@ -895,6 +903,8 @@ void demo_check() {
           if (newMode >= maxMode) newMode = 0;
           else newMode++;
           break;
+          if (newMode == COLOR_MUSIC_MODE)
+            newMode = 0;
 #endif
       }
       StepMode = 1;
@@ -916,6 +926,8 @@ void demo_check() {
           newMode = pgm_read_byte(available_mode + random8(available_mode_count));
 #else
           newMode = random8(0, maxMode);
+          if (newMode == COLOR_MUSIC_MODE)
+            newMode = 0;
 #endif
           break;
 #if MY_MODE
@@ -934,6 +946,8 @@ void demo_check() {
 #else
           if (newMode >= maxMode) newMode = 0;
           else newMode++;
+          if (newMode == COLOR_MUSIC_MODE)
+            newMode = 0;
           break;
 #endif
       }

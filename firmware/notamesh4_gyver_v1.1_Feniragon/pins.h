@@ -13,11 +13,11 @@
 //Чтобы узнать имя пульта запустите в примерах IRremote / IRrecvDump
 #define IR_RC5            0           // пульт RC5,
 #define IR_RC6            0           // пульт RC6,          
-#define IR_NEC            1           // пульт NEC,          
+#define IR_NEC            0           // пульт NEC,          
 #define IR_SONY           0           // пульт SONY,          
 #define IR_PANASONIC      0           // пульт PANASONIC,          
 #define IR_JVC            0           // пульт JVC,
-#define IR_SAMSUNG        0           // пульт SAMSUNG,
+#define IR_SAMSUNG        1           // пульт SAMSUNG,
 #define IR_WHYNTER        0           // пульт WHYNTER,
 #define IR_AIWA           0           // пульт AIWA_RC_T501,
 #define IR_LG             0           // пульт LG,
